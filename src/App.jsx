@@ -10,7 +10,7 @@ import { ResetPassword } from './components/ResetPassword';
 
 function App() {
   return (
-    <HashRouter basename='/SAU-Pasantias/'>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/recuperar-password" element={<ForgotPassword />} />
