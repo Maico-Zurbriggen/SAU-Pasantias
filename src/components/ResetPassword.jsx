@@ -1,136 +1,132 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import '../styles/ResetPassword.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL;
-
-export const ResetPassword = () => {
-  const [searchParams] = useSearchParams();
-  const [formData, setFormData] = useState({
-    newPassword: '',
-    confirmPassword: ''
-  });
+export function ResetPassword() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Obtener parámetros de la URL
-  const token = searchParams.get('token');
-  const email = searchParams.get('email');
-  const id = searchParams.get('id');
-  const role = searchParams.get('role');
+  // Obtener el token de la URL
+  const token = new URLSearchParams(location.search).get('token');
 
   useEffect(() => {
-    if (!token || !email || !id || !role) {
-      setError('Enlace de restablecimiento inválido');
+    if (!token) {
+      setError('Token no válido');
     }
-  }, [token, email, id, role]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccessMessage('');
-
-    if (!formData.newPassword || !formData.confirmPassword) {
-      setError('Por favor complete todos los campos');
-      return;
-    }
-
-    if (formData.newPassword !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       return;
     }
 
-    if (formData.newPassword.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres');
-      return;
-    }
+    setLoading(true);
+    setError('');
+    setMessage('');
 
     try {
-      const endpoint = role === 'admin' ? 'admin' : 'empresas';
-      const response = await fetch(`${API_URL}/${endpoint}/${id}`, {
-        method: 'PATCH',
+      const response = await fetch('http://localhost:3001/reset-password', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          password: formData.newPassword
-        })
+        body: JSON.stringify({ token, newPassword: password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Error al restablecer la contraseña');
+        throw new Error(data.error || 'Error al restablecer la contraseña');
       }
 
-      setSuccessMessage('Contraseña restablecida exitosamente');
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
-    } catch (error) {
-      setError('Error al restablecer la contraseña. Por favor intente nuevamente.');
+      setMessage('Contraseña actualizada correctamente');
+      setTimeout(() => navigate('/'), 3000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="text-red-600 text-center">
+          Token no válido o expirado. Por favor, solicita un nuevo enlace de recuperación.
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="reset-password-container">
-      <form onSubmit={handleSubmit} className="reset-password-form">
-        <h2>Restablecer Contraseña</h2>
-
-        <div className="form-group">
-          <label htmlFor="newPassword">Nueva Contraseña*</label>
-          <input
-            type="password"
-            id="newPassword"
-            name="newPassword"
-            value={formData.newPassword}
-            onChange={handleChange}
-            disabled={!token || !email || !id || !role}
-          />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Restablecer Contraseña
+          </h2>
         </div>
-
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirmar Contraseña*</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            disabled={!token || !email || !id || !role}
-          />
-        </div>
-
-        {error && (
-          <div className="error-message">
-            {error}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Nueva Contraseña
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Confirmar Contraseña
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
           </div>
-        )}
 
-        {successMessage && (
-          <div className="success-message">
-            {successMessage}
+          {error && (
+            <div className="text-red-600 text-sm text-center">
+              {error}
+            </div>
+          )}
+
+          {message && (
+            <div className="text-green-600 text-sm text-center">
+              {message}
+            </div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
+            </button>
           </div>
-        )}
-
-        <button type="submit" disabled={!token || !email || !id || !role}>
-          Restablecer Contraseña
-        </button>
-
-        <div className="back-link">
-          <a href="/" onClick={(e) => {
-            e.preventDefault();
-            navigate('/');
-          }}>Volver al inicio de sesión</a>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
-};
+}

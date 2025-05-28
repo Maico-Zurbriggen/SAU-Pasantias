@@ -1,112 +1,108 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/ForgotPassword.css';
 
-const API_URL = import.meta.env.VITE_API_URL;
-
-export const ForgotPassword = () => {
-  const [role, setRole] = useState('empresa');
+export function ForgotPassword() {
+  const [email, setEmail] = useState('');
+  const [userType, setUserType] = useState('empresa');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
-
-    if (role === 'alumno') {
-      setError('Los alumnos deben actualizar su contraseña desde sysacad.');
-      return;
-    }
+    setMessage('');
 
     try {
-      const response = await fetch(`${API_URL}/${role === 'admin' ? 'admin' : 'empresas'}`);
+      const response = await fetch('http://localhost:3001/request-reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, userType }),
+      });
+
       const data = await response.json();
-      
-      const email = e.target.email.value;
-      let userExists = false;
 
-      if (role === 'admin') {
-        userExists = data[0].email === email;
-      } else {
-        userExists = data.some(empresa => empresa.email === email);
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al procesar la solicitud');
       }
 
-      if (userExists) {
-        setSuccess(true);
-      } else {
-        setError('No existe una cuenta con ese correo electrónico.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Error al procesar la solicitud. Por favor, intente nuevamente.');
+      setMessage('Se ha enviado un correo con las instrucciones para restablecer tu contraseña');
+      setTimeout(() => navigate('/'), 3000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <div className="forgot-password-container">
-        <div className="success-message">
-          Se ha enviado un enlace de recuperación a tu correo electrónico.
-          <br />
-          <button onClick={() => navigate('/')}>Volver al inicio</button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="forgot-password-container">
-      <form onSubmit={handleSubmit} className="forgot-password-form">
-        <h2>Recuperar Contraseña</h2>
-        
-        <div className="form-group">
-          <label htmlFor="role">Tipo de Usuario</label>
-          <select 
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="empresa">Empresa</option>
-            <option value="admin">Administrador</option>
-            <option value="alumno">Alumno</option>
-          </select>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Recuperar Contraseña
+          </h2>
         </div>
-
-        {role === 'alumno' ? (
-          <div className="info-message">
-            Los alumnos deben actualizar su contraseña desde sysacad.
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div className="mb-4">
+              <label htmlFor="userType" className="block text-sm font-medium text-gray-700">
+                Tipo de Usuario
+              </label>
+              <select
+                id="userType"
+                value={userType}
+                onChange={(e) => setUserType(e.target.value)}
+                className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="empresa">Empresa</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Correo Electrónico
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
           </div>
-        ) : (
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Ingrese su correo electrónico"
-              required
-            />
-          </div>
-        )}
 
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-        
-        <button type="submit" disabled={role === 'alumno'}>
-          Recuperar Contraseña
-        </button>
+          {error && (
+            <div className="text-red-600 text-sm text-center">
+              {error}
+            </div>
+          )}
 
-        <div className="back-link">
-          <a href="/" onClick={(e) => {
-            e.preventDefault();
-            navigate('/');
-          }}>Volver al inicio de sesión</a>
-        </div>
-      </form>
+          {message && (
+            <div className="text-green-600 text-sm text-center">
+              {message}
+            </div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {loading ? 'Enviando...' : 'Enviar Instrucciones'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
-};
+}
