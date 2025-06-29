@@ -70,6 +70,10 @@ h2 {
   color: #155724;
   background-color: #d4edda;
   border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .forgot-password-link {

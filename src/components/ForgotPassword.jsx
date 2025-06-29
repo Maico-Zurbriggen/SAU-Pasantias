@@ -80,7 +80,7 @@ export function ForgotPassword() {
 
         {error && <div className="error-message">{error}</div>}
 
-        {message && <div className="error-message message">{message}</div>}
+        {message && <div className="message">{message}</div>}
 
         <div>
           <button type="submit" disabled={loading}>
