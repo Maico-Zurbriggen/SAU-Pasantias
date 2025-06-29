@@ -1,62 +1,62 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services';
-import '../styles/LoginForm.css'
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { authService } from "../services";
+import "../styles/LoginForm.css";
 
 export const LoginForm = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    role: 'admin'
+    email: "",
+    password: "",
+    role: "admin",
   });
-  const [error, setError] = useState(''); // Agregamos estado para manejar el error
+  const [error, setError] = useState(""); // Agregamos estado para manejar el error
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
       const result = await authService.login(formData.role, {
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
-      
+
       if (result) {
-        if (formData.role === 'empresa') {
-          localStorage.setItem('empresaId', result.id);
+        if (formData.role === "empresa") {
+          localStorage.setItem("empresaId", result.id);
           if (result.redirectTo) {
             navigate(result.redirectTo);
             return;
           }
         }
-        
-        switch(formData.role) {
-          case 'empresa':
-            navigate('/empresa');
+
+        switch (formData.role) {
+          case "empresa":
+            navigate("/empresa");
             break;
-          case 'admin':
-            navigate('/admin');
+          case "admin":
+            navigate("/admin");
             break;
-          case 'alumno':
-            navigate('/alumno');
+          case "alumno":
+            navigate("/alumno");
             break;
           default:
             break;
         }
       } else {
-        setError('Credenciales inválidas');
+        setError("Credenciales inválidas");
       }
     } catch (error) {
-      setError('Error al intentar iniciar sesión');
+      setError("Error al intentar iniciar sesión");
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -64,10 +64,10 @@ export const LoginForm = () => {
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
         <h2>Iniciar Sesión</h2>
-        
+
         <div className="form-group">
           <label htmlFor="role">Tipo de Usuario</label>
-          <select 
+          <select
             id="role"
             name="role"
             value={formData.role}
@@ -104,12 +104,8 @@ export const LoginForm = () => {
           />
         </div>
 
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-        
+        {error && <div className="error-message">{error}</div>}
+
         <button type="submit">Iniciar Sesión</button>
 
         <div className="forgot-password-link">
