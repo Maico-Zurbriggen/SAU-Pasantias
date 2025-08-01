@@ -5,13 +5,14 @@
 
 .sidebar {
   width: 50px;
-  background-color: #333;
-  color: white;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
   transition: width 0.3s ease;
   position: fixed;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  z-index: 100;
 }
 
 .sidebar.open {
@@ -20,8 +21,8 @@
 
 .toggle-button {
   width: 100%;
-  background: #333;
-  color: white;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
   border: none;
   padding: 15px 0;
   cursor: pointer;
@@ -33,6 +34,7 @@
 .nav-links {
   list-style: none;
   padding: 0;
+  margin: 0;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease;
@@ -46,15 +48,16 @@
 }
 
 .nav-links a {
-  color: white;
+  color: var(--sidebar-text);
   text-decoration: none;
   padding: 10px;
   display: block;
+  font-size: var(--font-size-base);
 }
 
 .nav-links a:hover {
   color: #ddd;
-  background-color: #0056b3;
+  background-color: var(--sidebar-hover);
 }
 
 .content {
@@ -62,6 +65,8 @@
   padding: 20px;
   margin-left: 50px;
   transition: margin-left 0.3s ease;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .sidebar.open + .content {
@@ -70,8 +75,8 @@
 
 .logout-button {
   width: 100%;
-  background: #dc3545;
-  color: white;
+  background: var(--logout-button);
+  color: var(--sidebar-text);
   border: none;
   padding: 15px 0;
   cursor: pointer;
@@ -90,5 +95,34 @@
 }
 
 .logout-button:hover {
-  background-color: #c82333;
+  background-color: var(--logout-button-hover);
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+  .content {
+    padding: 15px;
+  }
+  
+  .sidebar.open {
+    width: 200px;
+  }
+  
+  .sidebar.open + .content {
+    margin-left: 200px;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 576px) {
+  .sidebar.open {
+    width: 100%;
+    position: fixed;
+  }
+  
+  .sidebar.open + .content {
+    margin-left: 0;
+    opacity: 0.3;
+    pointer-events: none;
+  }
 }

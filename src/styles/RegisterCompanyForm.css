@@ -1,16 +1,17 @@
 .register-company-container {
   display: flex;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
+  background-color: var(--background-color);
 }
 
 .register-company-form {
-  background-color: white;
-  padding: 2rem;
+  background-color: var(--card-bg);
+  padding: var(--form-padding);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   width: 100%;
-  max-width: 600px;
+  max-width: var(--form-max-width);
 }
 
 .form-group {
@@ -21,43 +22,53 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  color: var(--text-color);
 }
 
 .form-group input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
+  background-color: var(--card-bg);
+  color: var(--text-color);
 }
 
 button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover);
 }
 
-h2 {
+h2, h3 {
   text-align: center;
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--text-color);
+  font-size: var(--font-size-heading);
+}
+
+h3 {
+  font-size: calc(var(--font-size-heading) * 0.8);
+  margin-bottom: 1rem;
 }
 
 .password-container {
   margin-top: 2rem;
   padding: 1rem;
-  background-color: #f8f9fa;
+  background-color: var(--card-bg);
   border-radius: 4px;
+  border: 1px solid var(--input-border);
 }
 
 .password-display {
@@ -67,15 +78,22 @@ h2 {
   gap: 1rem;
   margin-top: 0.5rem;
   padding: 0.5rem;
-  background-color: white;
-  border: 1px solid #ddd;
+  background-color: var(--card-bg);
+  border: 1px solid var(--input-border);
   border-radius: 4px;
+  color: var(--text-color);
+}
+
+.password-display span {
+  color: var(--text-color);
+  word-break: break-word;
 }
 
 .copy-button {
   width: auto;
   padding: 0.5rem 1rem;
   background-color: #28a745;
+  white-space: nowrap;
 }
 
 .copy-button:hover {
@@ -83,9 +101,9 @@ h2 {
 }
 
 .error-message {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 15px;
@@ -93,11 +111,23 @@ h2 {
 }
 
 .success-message {
-  color: #155724;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
+  color: var(--success-text);
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 15px;
   text-align: center;
+}
+
+/* Ajustes específicos para móvil */
+@media (max-width: 576px) {
+  .password-display {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .copy-button {
+    margin-top: 0.5rem;
+  }
 }

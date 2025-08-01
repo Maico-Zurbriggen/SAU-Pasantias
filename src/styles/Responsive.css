@@ -1,0 +1,121 @@
+/* Breakpoints:
+ - Móvil: hasta 576px
+ - Tablet: 577px - 992px
+ - Laptop: 993px - 1200px
+ - PC: 1201px en adelante
+*/
+
+/* Estilos base (móvil primero) */
+:root {
+  --form-padding: 1rem;
+  --form-max-width: 100%;
+  --font-size-base: 14px;
+  --font-size-heading: 1.5rem;
+}
+
+/* Tablet (577px - 992px) */
+@media (min-width: 577px) {
+  :root {
+    --form-padding: 1.5rem;
+    --form-max-width: 500px;
+    --font-size-base: 15px;
+    --font-size-heading: 1.75rem;
+  }
+  
+  .login-form,
+  .register-company-form {
+    padding: var(--form-padding);
+    max-width: var(--form-max-width);
+  }
+  
+  .theme-toggle-button {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* Laptop (993px - 1200px) */
+@media (min-width: 993px) {
+  :root {
+    --form-padding: 2rem;
+    --form-max-width: 600px;
+    --font-size-base: 16px;
+    --font-size-heading: 2rem;
+  }
+  
+  .login-form,
+  .register-company-form {
+    padding: var(--form-padding);
+    max-width: var(--form-max-width);
+  }
+  
+  .theme-toggle-button {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* PC (1201px en adelante) */
+@media (min-width: 1201px) {
+  :root {
+    --form-max-width: 650px;
+  }
+}
+
+/* Ajustes específicos para móvil */
+@media (max-width: 576px) {
+  .login-container,
+  .register-company-container {
+    padding: 1rem;
+  }
+  
+  .login-form,
+  .register-company-form {
+    padding: 1rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  button {
+    padding: 0.6rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .password-display {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .password-display span {
+    word-break: break-all;
+  }
+  
+  .theme-toggle-button {
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+  }
+  
+  /* Ajustes para el sidebar en móvil */
+  .sidebar {
+    width: 40px;
+  }
+  
+  .sidebar.open {
+    width: 200px;
+  }
+  
+  .content {
+    margin-left: 40px;
+    padding: 15px;
+  }
+  
+  .sidebar.open + .content {
+    margin-left: 200px;
+  }
+}
